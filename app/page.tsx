@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState } from "react";
 
 export default function Home() {
@@ -7,7 +9,7 @@ export default function Home() {
   const [temperature, setTemperature] = useState(null);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setTemperature(null);
