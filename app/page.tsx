@@ -9,6 +9,7 @@ export default function Home() {
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log("KEY?", process.env.NEXT_PUBLIC_WEATHER_API_KEY);
     e.preventDefault();
     setError("");
     setTemperature(null);
@@ -60,7 +61,7 @@ export default function Home() {
           textAlign: "center",
         }}
       >
-        <h1 style={{ marginBottom: "10px" }}>🌤 Weather App</h1>
+        <h1 style={{ marginBottom: "10px" ,color : "#000"}}>🌤 Weather App</h1>
         <p style={{ color: "#666", marginBottom: "30px" }}>
           Enter a city to get the current temperature
         </p>
@@ -78,6 +79,7 @@ export default function Home() {
               border: "1px solid #ddd",
               fontSize: "16px",
               marginBottom: "16px",
+              color:"#000"
             }}
           />
 
@@ -103,7 +105,8 @@ export default function Home() {
           <div
             style={{
               marginTop: "30px",
-              fontSize: "18px",
+              fontSize: "20px",
+              color : "#000"
             }}
           >
             🌡️ <strong>{city}</strong>: {temperature}°C
