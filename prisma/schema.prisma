@@ -16,6 +16,7 @@ model WeatherSnapshot {
 
   // Core identity fields
   city          String
+  city_key      String
   country       String?  // e.g., "US"
 
   // Weather metrics (nullable to be resilient to API shape changes)
@@ -27,7 +28,7 @@ model WeatherSnapshot {
   weather_main  String?  // e.g., "Clouds"
   weather_desc  String?  // e.g., "broken clouds"
 
-  // Timestamp from OpenWeather (unix seconds)
+  // Timestamp from OpenWeather
   observed_unix Int?
 
   // When we stored this snapshot in DB (server time)

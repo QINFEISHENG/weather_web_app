@@ -1,14 +1,19 @@
 //Using mock objects +  test doubles
 //This tst will use the mock objects to test the GET function 
 //replace the real database client with a mock object to check the get fucntion 
-jest.mock("@/lib/db_client_prisma", () => ({
+jest.mock("@/lib/db_client_prisma", () =>({
   prisma: {
-    weatherSnapshot: {
-    create: jest.fn(),
-    },},}));
+    weatherSnapshot:{
+        create: jest.fn(),
+    },
+    eventLog:{
+        create:jest.fn(),
 
-import { GET } from "./route";
-import { prisma } from "@/lib/db_client_prisma";
+    },
+},}));
+
+import {GET} from "./route";
+import {prisma} from "@/lib/db_client_prisma";
 
 describe("GET /api/data_collection/weather (integration)", () => {
   beforeEach(() => {
@@ -24,7 +29,7 @@ describe("GET /api/data_collection/weather (integration)", () => {
     expect(body.error).toBeTruthy();
   });
 
-  it("fetches OpenWeather, persists snapshot, returns payload", async () => {
+  it("fetches OpenWeather, persists snapshot, returns payload", async () =>{
     //
     const fetchMock = jest.fn(async () => {
       return new Response(

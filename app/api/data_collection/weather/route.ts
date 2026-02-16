@@ -20,6 +20,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   // get the city  from the search parameters just created.
   const city = searchParams.get("city")?.trim();
+  const normalizeCityKey = (s: string) => s.trim().toLowerCase();
  // return the error message if the city is not provided
   if (!city) {
     return NextResponse.json({ error: "Hey! City is required :" }, { status: 400 });
@@ -57,6 +58,7 @@ export async function GET(req: Request) {
   // get the data from the raw response and create the payload for the database
   const payload = {
     city: raw?.name ?? city,
+    city_key: normalizeCityKey(raw?.name ?? city),
     country: raw?.sys?.country ?? null,
     temp_c: raw?.main?.temp ?? null,
     feels_like_c: raw?.main?.feels_like ?? null,
@@ -74,7 +76,6 @@ export async function GET(req: Request) {
   city: payload.city,
   ms: Date.now() - t0,
   });
-  await prisma.weatherSnapshot.create({ data: payload });
 
   await prisma.eventLog.create({
   data: {

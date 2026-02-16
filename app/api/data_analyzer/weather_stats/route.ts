@@ -28,10 +28,11 @@ export async function GET(req: Request) {
   }
   // calculate the timestamp for N hours ago
   const since = new Date(Date.now() - hours * 60 * 60 * 1000);
+  const cityKey = city.toLowerCase();
   // create the row from the database by using the prisma client
   const rows = await prisma.weatherSnapshot.findMany({
     where: {
-      city,
+      city_key : cityKey,
       createdAt: { gte: since },
       temp_c: { not: null },
     },

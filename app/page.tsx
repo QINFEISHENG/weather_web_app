@@ -2,40 +2,50 @@
 
 import type React from "react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   const [city, setCity] = useState("");
   const [temperature, setTemperature] = useState<number | null>(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("KEY?", process.env.NEXT_PUBLIC_WEATHER_API_KEY);
     e.preventDefault();
     setError("");
     setTemperature(null);
 
-    if (!city) {
+    const c = city.trim();
+    if (!c) {
       setError("Please enter a city name.");
       return;
     }
 
+    setLoading(true);
     try {
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-        city
-      )}&units=metric&appid=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}`;
 
-      const res = await fetch(url);
+      const res = await fetch(
+        `/api/data_collection/weather?city=${encodeURIComponent(c)}`,
+        { method: "GET" }
+      );
+
       const text = await res.text();
-
       if (!res.ok) {
         setError(`HTTP ${res.status}: ${text}`);
         return;
       }
 
-      const data = JSON.parse(text);
-      setTemperature(data.main.temp);
+      const payload = JSON.parse(text);
+      setTemperature(payload?.temp_c ?? null);
+
+      // 2) 跳转到 report page，让 report page 去做 analyzer 展示
+      router.push(`/report?city=${encodeURIComponent(c)}`);
     } catch (err) {
       setError(`Fetch error: ${String(err)}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,9 +71,9 @@ export default function Home() {
           textAlign: "center",
         }}
       >
-        <h1 style={{ marginBottom: "10px" ,color : "#000"}}>🌤 Weather App</h1>
+        <h1 style={{ marginBottom: "10px", color: "#000" }}>🌤 Weather App</h1>
         <p style={{ color: "#666", marginBottom: "30px" }}>
-          Enter a city to get the current temperature
+          Enter a city to collect data and view the report
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -79,48 +89,38 @@ export default function Home() {
               border: "1px solid #ddd",
               fontSize: "16px",
               marginBottom: "16px",
-              color:"#000"
+              color: "#000",
             }}
           />
 
           <button
             type="submit"
+            disabled={loading}
             style={{
               width: "100%",
               padding: "14px",
               borderRadius: "10px",
               border: "none",
-              background: "#4f46e5",
+              background: loading ? "#6366f1" : "#4f46e5",
+              opacity: loading ? 0.8 : 1,
               color: "white",
               fontSize: "16px",
               fontWeight: 600,
-              cursor: "pointer",
+              cursor: loading ? "not-allowed" : "pointer",
             }}
           >
-            Get Weather
+            {loading ? "Collecting..." : "Get Weather + Report"}
           </button>
         </form>
 
         {temperature !== null && (
-          <div
-            style={{
-              marginTop: "30px",
-              fontSize: "20px",
-              color : "#000"
-            }}
-          >
+          <div style={{ marginTop: "30px", fontSize: "20px", color: "#000" }}>
             🌡️ <strong>{city}</strong>: {temperature}°C
           </div>
         )}
 
         {error && (
-          <div
-            style={{
-              marginTop: "20px",
-              color: "#dc2626",
-              fontSize: "14px",
-            }}
-          >
+          <div style={{ marginTop: "20px", color: "#dc2626", fontSize: "14px" }}>
             {error}
           </div>
         )}
