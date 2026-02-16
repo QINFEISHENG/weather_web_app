@@ -1,8 +1,6 @@
 // DATA ANALYZER
 // This will reads the snapshots from database
 // The ANALYZER part will be  computes count / avg / min / max within last N hours 
-
-
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db_client_prisma";
 
@@ -11,6 +9,7 @@ export async function GET(req: Request) {
   // create the search parmeters for this request url
   const { searchParams } = new URL(req.url);
   // get the city  parameter
+  // trim the city in case there is extra space
   const city = searchParams.get("city")?.trim();
   // get the hours parameter set default to 24 if not provided
   const hoursRaw = searchParams.get("hours") ?? "24";

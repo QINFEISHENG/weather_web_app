@@ -5,10 +5,9 @@
 // basically this will fetch the weather data from openweather api and then it will write it into a database
 // by using the prima client
  
-// import the NextResponse
 import { NextResponse } from "next/server";
 
-// this is the client for the database
+//  client for the database
 import { prisma } from "@/lib/db_client_prisma";
 
 // create a async GET function to handle the GET request to this endpoint
@@ -26,7 +25,7 @@ export async function GET(req: Request) {
   // return error is the key is not provided
   if (!key) {
     return NextResponse.json(
-      { error: "missing OPENWEATHER_API_KEY on server" },
+      { error: "No OPENWEATHER_API_KEY on the server!!" },
       { status: 500 }
     );
   }
