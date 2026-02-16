@@ -1,0 +1,39 @@
+// DATA STORE SCHEMA
+// This schema defines the WeatherSnapshot table used for:
+// - DATA COLLECTION (writing snapshots)
+// - DATA ANALYZER (reading + aggregating snapshots)
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model WeatherSnapshot {
+  id            Int      @id @default(autoincrement())
+
+  // Core identity fields
+  city          String
+  country       String?  // e.g., "US"
+
+  // Weather metrics (nullable to be resilient to API shape changes)
+  temp_c        Float?
+  feels_like_c  Float?
+  humidity      Int?
+
+  // Weather description
+  weather_main  String?  // e.g., "Clouds"
+  weather_desc  String?  // e.g., "broken clouds"
+
+  // Timestamp from OpenWeather (unix seconds)
+  observed_unix Int?
+
+  // When we stored this snapshot in DB (server time)
+  createdAt     DateTime @default(now())
+
+  // Helpful indexes for analytics queries (e.g., last 24h per city)
+  @@index([city, createdAt])
+  @@index([createdAt])
+}
