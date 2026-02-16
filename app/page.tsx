@@ -8,14 +8,12 @@ export default function Home() {
   const router = useRouter();
 
   const [city, setCity] = useState("");
-  const [temperature, setTemperature] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setTemperature(null);
 
     const c = city.trim();
     if (!c) {
@@ -25,9 +23,9 @@ export default function Home() {
 
     setLoading(true);
     try {
-
+      // ✅ call forecast collection (NOT weather)
       const res = await fetch(
-        `/api/data_collection/weather?city=${encodeURIComponent(c)}`,
+        `/api/data_collection/forecast?city=${encodeURIComponent(c)}`,
         { method: "GET" }
       );
 
@@ -37,10 +35,9 @@ export default function Home() {
         return;
       }
 
-      const payload = JSON.parse(text);
-      setTemperature(payload?.temp_c ?? null);
+      // optional: you can parse and show something if you want
+      // const payload = JSON.parse(text);
 
-      // 2) 跳转到 report page，让 report page 去做 analyzer 展示
       router.push(`/report?city=${encodeURIComponent(c)}`);
     } catch (err) {
       setError(`Fetch error: ${String(err)}`);
@@ -73,7 +70,7 @@ export default function Home() {
       >
         <h1 style={{ marginBottom: "10px", color: "#000" }}>🌤 Weather App</h1>
         <p style={{ color: "#666", marginBottom: "30px" }}>
-          Enter a city to collect data and view the report
+          Enter a city to fetch 5-day forecast and view the report
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -109,15 +106,9 @@ export default function Home() {
               cursor: loading ? "not-allowed" : "pointer",
             }}
           >
-            {loading ? "Collecting..." : "Get Weather + Report"}
+            {loading ? "Collecting Forecast..." : "Get 5-Day Forecast + Report"}
           </button>
         </form>
-
-        {temperature !== null && (
-          <div style={{ marginTop: "30px", fontSize: "20px", color: "#000" }}>
-            🌡️ <strong>{city}</strong>: {temperature}°C
-          </div>
-        )}
 
         {error && (
           <div style={{ marginTop: "20px", color: "#dc2626", fontSize: "14px" }}>

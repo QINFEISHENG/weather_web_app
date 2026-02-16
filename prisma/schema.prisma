@@ -1,7 +1,8 @@
+// prisma/schema.prisma
 // DATA STORE SCHEMA
-// This schema defines the WeatherSnapshot table used for:
-// - DATA COLLECTION (writing snapshots)
-// - DATA ANALYZER (reading + aggregating snapshots)
+// - WeatherSnapshot: store OBSERVED or FORECAST points
+// - EventLog: store simple events for "event collaboration/messaging" style logging
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
@@ -14,31 +15,41 @@ generator client {
 model WeatherSnapshot {
   id            Int      @id @default(autoincrement())
 
-  // Core identity fields
+  // City identity
   city          String
   city_key      String
   country       String?  // e.g., "US"
 
-  // Weather metrics (nullable to be resilient to API shape changes)
+  // Weather metrics (nullable)
   temp_c        Float?
   feels_like_c  Float?
   humidity      Int?
 
-  // Weather description
-  weather_main  String?  // e.g., "Clouds"
-  weather_desc  String?  // e.g., "broken clouds"
+  // Weather description (nullable)
+  weather_main  String?
+  weather_desc  String?
 
-  // Timestamp from OpenWeather
+  // Timestamp from OpenWeather:
+  // - OBSERVED: current weather dt
+  // - FORECAST: forecast point dt (3-hr step)
   observed_unix Int?
 
-  // When we stored this snapshot in DB (server time)
+  // Distinguish row meaning
+  // "OBSERVED" or "FORECAST"
+  data_type     String   @default("OBSERVED")
+
+  // When we stored in DB (server time)
   createdAt     DateTime @default(now())
 
-  // Helpful indexes for analytics queries (e.g., last 24h per city)
-  @@index([city, createdAt])
+  // Indexes for analytics
+  @@index([city_key, data_type, createdAt])
+  @@index([city_key, data_type, observed_unix])
   @@index([createdAt])
+
+  // Avoid duplicates for same city/type/timestamp
+  @@unique([city_key, data_type, observed_unix])
 }
-// add a model jsut for the  message
+
 model EventLog {
   id        Int      @id @default(autoincrement())
   eventType String
