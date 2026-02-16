@@ -1,0 +1,35 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model WeatherSnapshot {
+  id            Int      @id @default(autoincrement())
+  city          String
+  city_key      String
+  country       String?
+  temp_c        Float?
+  feels_like_c  Float?
+  humidity      Int?
+  weather_main  String?
+  weather_desc  String?
+  observed_unix Int?
+  data_type     String   @default("OBSERVED")
+  createdAt     DateTime @default(now())
+
+  @@index([city_key, data_type, createdAt])
+  @@index([city_key, data_type, observed_unix])
+  @@index([createdAt])
+  @@unique([city_key, data_type, observed_unix])
+}
+
+model EventLog {
+  id        Int      @id @default(autoincrement())
+  eventType String
+  payload   Json
+  createdAt DateTime @default(now())
+}
