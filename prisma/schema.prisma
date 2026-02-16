@@ -37,3 +37,10 @@ model WeatherSnapshot {
   @@index([city, createdAt])
   @@index([createdAt])
 }
+// add a model jsut for the  message
+model EventLog {
+  id        Int      @id @default(autoincrement())
+  eventType String
+  payload   Json
+  createdAt DateTime @default(now())
+}

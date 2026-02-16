@@ -74,6 +74,13 @@ export async function GET(req: Request) {
   city: payload.city,
   ms: Date.now() - t0,
   });
+  await prisma.weatherSnapshot.create({ data: payload });
 
+  await prisma.eventLog.create({
+  data: {
+    eventType: "WEATHER_SNAPSHOT_SAVED",
+    payload: payload,
+  },
+});
   return NextResponse.json(payload);
 }
