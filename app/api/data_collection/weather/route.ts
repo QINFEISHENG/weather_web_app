@@ -12,6 +12,10 @@ import { prisma } from "@/lib/db_client_prisma";
 
 // create a async GET function to handle the GET request to this endpoint
 export async function GET(req: Request) {
+  //add the log to check the performance
+  const t0 = Date.now();
+  const requestId = crypto.randomUUID();
+  console.log("[weather_collect] start", { requestId });
   // create the search parameters based on this url  
   const { searchParams } = new URL(req.url);
   // get the city  from the search parameters just created.
@@ -38,6 +42,11 @@ export async function GET(req: Request) {
   const text = await r.text();
 
   if (!r.ok) {
+    console.warn("[weather_collect] upstream_error", {
+    requestId,
+    status: r.status,
+    ms: Date.now() - t0,
+  });
     return NextResponse.json(
       { error: `OpenWeather ${r.status}: ${text}` },
       { status: 502 }
@@ -59,6 +68,12 @@ export async function GET(req: Request) {
 
   // write the data into the database by using the prisma client
   await prisma.weatherSnapshot.create({ data: payload });
+  //add log 
+  console.log("[weather_collect] ok", {
+  requestId,
+  city: payload.city,
+  ms: Date.now() - t0,
+  });
 
   return NextResponse.json(payload);
 }
