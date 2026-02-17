@@ -3,18 +3,24 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "test": "jest",
-    "db:local:reset": "rm -f dev.db prisma/dev.db && rm -rf prisma/migrations",
-    "prisma:local:generate": "dotenv -e .env.local -- prisma generate --schema prisma/schema.sqlite.prisma",
-    "prisma:local:migrate": "dotenv -e .env.local -- prisma migrate dev --name init --schema prisma/schema.sqlite.prisma",
-    "prisma:prod:generate": "prisma generate --schema prisma/schema.postgres.prisma",
-    "prisma:prod:deploy": "prisma migrate deploy --schema prisma/schema.postgres.prisma",
-    "postinstall": "prisma generate --schema prisma/schema.postgres.prisma"
-  },
+  "dev": "npm run prisma:local:generate && next dev",
+  "build": "npm run prisma:prod:generate && npm run prisma:prod:deploy && next build",
+  "start": "next start",
+  "lint": "eslint",
+  "test": "jest",
+
+  "db:local:reset": "rm -f dev.db prisma/dev.db && rm -rf prisma/migrations",
+  "prisma:local:generate": "dotenv -e .env.local -- prisma generate --schema prisma/schema.sqlite.prisma",
+  "prisma:local:migrate": "dotenv -e .env.local -- prisma migrate dev --name init --schema prisma/schema.sqlite.prisma",
+
+  "prisma:prod:generate": "prisma generate --schema prisma/schema.postgres.prisma",
+  "prisma:prod:deploy": "prisma migrate deploy --schema prisma/schema.postgres.prisma",
+
+  "postinstall": "prisma generate --schema prisma/schema.postgres.prisma",
+   "prisma:supabase:init-migration": "dotenv -e .env.supabase -- prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.postgres.prisma --script > prisma/migrations/000_init/migration.sql",
+    "prisma:supabase:deploy": "dotenv -e .env.supabase -- prisma migrate deploy --schema prisma/schema.postgres.prisma"
+
+},
   "dependencies": {
     "@prisma/client": "^6.19.2",
     "@sentry/nextjs": "^10.38.0",

@@ -10,8 +10,8 @@ type ForecastStatsResponse = {
   avg: number | null;
   min: number | null;
   max: number | null;
-  min_at?: number | null; // unix
-  max_at?: number | null; // unix
+  min_at?: number | null; 
+  max_at?: number | null; 
 };
 
 type ForecastSeriesResponse = {
@@ -19,7 +19,7 @@ type ForecastSeriesResponse = {
   city_key?: string;
   count: number;
   points: Array<{
-    t: number; // unix seconds
+    t: number; 
     temp_c: number | null;
     humidity: number | null;
     main?: string | null;
@@ -70,13 +70,13 @@ function Card(props: { title: string; value: string; sub?: string }) {
   );
 }
 
-// only use the bacic chart
+// only use the basic chart
 function TempLineChart(props: {
-  points: Array<{ t: number; temp_c: number | null }>;
+  points: Array<{t: number; temp_c: number | null }>;
 }) {
   const cleaned = props.points
     .filter((p) => typeof p.temp_c === "number" && Number.isFinite(p.temp_c as number))
-    .map((p) => ({ t: p.t, y: p.temp_c as number }));
+    .map((p) => ({t: p.t, y: p.temp_c as number }));
 
   if (cleaned.length < 2) {
     return (
@@ -85,25 +85,20 @@ function TempLineChart(props: {
       </div>
     );
   }
-
   const W = 980;
   const H = 220;
   const pad = 30;
-
   const minY = Math.min(...cleaned.map((p) => p.y));
   const maxY = Math.max(...cleaned.map((p) => p.y));
   const minX = Math.min(...cleaned.map((p) => p.t));
   const maxX = Math.max(...cleaned.map((p) => p.t));
-
   const scaleX = (t: number) =>
     pad + ((t - minX) / (maxX - minX)) * (W - pad * 2);
-
   const scaleY = (y: number) => {
     if (maxY === minY) return H / 2;
     // reverse the y axis
     return pad + (1 - (y - minY) / (maxY - minY)) * (H - pad * 2);
   };
-
   const d = cleaned
     .map((p, i) => {
       const x = scaleX(p.t);
@@ -235,9 +230,8 @@ export default function ReportPage() {
         if (!cancelled) setLoading(false);
       }
     }
-
     run();
-    return () => {
+    return ()=> {
       cancelled = true;
     };
   }, [city]);
@@ -245,9 +239,9 @@ export default function ReportPage() {
   return (
     <main
       style={{
-        minHeight: "100vh",
-        background: "#f3f6ff",
-        padding: "36px 28px",
+        minHeight:"100vh",
+        background:"#f3f6ff",
+        padding:"36px 28px",
         fontFamily: "Inter, Arial, sans-serif",
       }}
     >
@@ -292,9 +286,9 @@ export default function ReportPage() {
         </div>
 
         {loading ? (
-          <div style={{ marginTop: "22px", color: "#111827" }}>Loading…</div>
+          <div style={{ marginTop:"22px",color:"#111827" }}>Loading!!</div>
         ) : error ? (
-          <div style={{ marginTop: "22px", color: "#dc2626" }}>{error}</div>
+          <div style={{ marginTop:"22px",color:"#dc2626" }}>{error}</div>
         ) : (
           <>
             {/* cards */}
@@ -339,10 +333,10 @@ export default function ReportPage() {
               />
             </div>
 
-            {/* chart */}
+            {/*this is the chart part*/}
             <div style={{ marginTop: "18px" }}>
               <TempLineChart
-                points={(series?.points ?? []).map((p) => ({ t: p.t, temp_c: p.temp_c }))}
+                points={(series?.points ??[]).map((p) =>({t:p.t,temp_c:p.temp_c }))}
               />
             </div>
           </>

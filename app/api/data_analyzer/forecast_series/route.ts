@@ -15,6 +15,7 @@ export async function GET(req: Request) {
 
   const rows = await prisma.weatherSnapshot.findMany({
     where: {
+      // use city key to make it more robust!!!!
       city_key,
       data_type: "FORECAST",
       observed_unix: { not: null },

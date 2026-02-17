@@ -72,20 +72,20 @@ describe("GET /api/data_collection/forecast", () => {
     expect(body.country).toBe("US");
     expect(body.inserted).toBe(2);
 
-    // verify upstream call
+    //verify  the upstream call
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
-    // verify DB operations
+    //verify the database operations
     expect(prisma.weatherSnapshot.deleteMany).toHaveBeenCalledTimes(1);
     expect(prisma.weatherSnapshot.createMany).toHaveBeenCalledTimes(1);
     expect(prisma.eventLog.create).toHaveBeenCalledTimes(1);
 
-    // check deleteMany arg uses city_key + FORECAST
+    // verify deleteMany arg uses city_key + FORECAST
     const delArg = (prisma.weatherSnapshot.deleteMany as jest.Mock).mock.calls[0][0];
     expect(delArg.where.data_type).toBe("FORECAST");
-    expect(delArg.where.city_key).toBe("new york"); // case-insensitive key
+    expect(delArg.where.city_key).toBe("new york"); 
 
-    // check inserted data shape
+    // verify the check inserted data shape
     const createArg = (prisma.weatherSnapshot.createMany as jest.Mock).mock.calls[0][0];
     expect(Array.isArray(createArg.data)).toBe(true);
     expect(createArg.data.length).toBe(2);
