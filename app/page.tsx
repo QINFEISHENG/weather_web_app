@@ -23,7 +23,7 @@ export default function Home() {
 
     setLoading(true);
     try {
-      // ✅ call forecast collection (NOT weather)
+      // call forecast collection API!!!!
       const res = await fetch(
         `/api/data_collection/forecast?city=${encodeURIComponent(c)}`,
         { method: "GET" }
@@ -34,10 +34,7 @@ export default function Home() {
         setError(`HTTP ${res.status}: ${text}`);
         return;
       }
-
-      // optional: you can parse and show something if you want
       // const payload = JSON.parse(text);
-
       router.push(`/report?city=${encodeURIComponent(c)}`);
     } catch (err) {
       setError(`Fetch error: ${String(err)}`);
@@ -45,7 +42,6 @@ export default function Home() {
       setLoading(false);
     }
   };
-
   return (
     <main
       style={{

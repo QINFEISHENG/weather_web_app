@@ -22,13 +22,13 @@ export async function GET(req: Request) {
     },
     orderBy: { observed_unix: "asc" },
     select: {
-      city: true,
-      country: true,
+      city:          true,
+      country:       true,
       observed_unix: true,
-      temp_c: true,
-      humidity: true,
-      weather_main: true,
-      weather_desc: true,
+      temp_c:        true,
+      humidity:      true,
+      weather_main:  true,
+      weather_desc:  true,
     },
   });
 
@@ -37,11 +37,11 @@ export async function GET(req: Request) {
     city_key,
     count: rows.length,
     points: rows.map((r) => ({
-      t: r.observed_unix as number,
-      temp_c: r.temp_c,
-      humidity: r.humidity,
-      main: r.weather_main,
-      desc: r.weather_desc,
+      t:         r.observed_unix as number,
+      temp_c:    r.temp_c,
+      humidity:  r.humidity,
+      main:      r.weather_main,
+      desc:      r.weather_desc,
     })),
   });
 }
